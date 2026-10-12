@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f5f4ef">
+    <title>FURNITURE RECEIVABLES</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <a class="brand" href="./" aria-label="FURNITURE RECEIVABLES beranda">
+          <span class="brand-mark">F</span>
+          <span>FURNITURE<br>RECEIVABLES</span>
+        </a>
+        <p class="nav-label">MENU</p>
+        <a class="nav-link active" href="#dashboard">▦ <span>Ringkasan</span></a>
+        <a class="nav-link" href="#receivables">◷ <span>Aging schedule</span></a>
+        <div class="sidebar-info">
+          <span>DEMO PROJECT</span>
+          <p>Data demo tersimpan di browser ini saja.</p>
+        </div>
+        <div class="sidebar-footer"><span></span> Siap digunakan</div>
+      </aside>
+
+      <main class="main" id="dashboard">
+        <header class="topbar">
+          <span>Keuangan <b>/</b> Piutang usaha</span>
+          <time id="today"></time>
+        </header>
+        <section class="heading">
+          <div>
+            <p class="eyebrow">PENGELOLAAN PIUTANG</p>
+            <h1>FURNITURE RECEIVABLES</h1>
+            <p class="subheading">Pantau tagihan, pembayaran, dan umur piutang pelanggan.</p>
+          </div>
+          <div class="actions">
+            <button class="button button-light" id="reset-demo" type="button">Reset demo</button>
+            <button class="button button-outline" id="add-customer" type="button">+ Pelanggan</button>
+            <button class="button button-primary" id="add-invoice" type="button">+ Invoice</button>
+          </div>
+        </section>
+
+        <div class="notice" id="notice" role="status" hidden></div>
+        <section class="summary-grid" aria-label="Ringkasan piutang">
+          <article class="summary-card primary-card"><span>Total piutang terbuka</span><strong id="total-open">Rp0</strong><small>Saldo yang belum dibayar</small></article>
+          <article class="summary-card"><span>Piutang terlambat</span><strong id="total-overdue">Rp0</strong><small><b id="overdue-count">0</b> invoice lewat jatuh tempo</small></article>
+          <article class="summary-card"><span>Jatuh tempo 30 hari</span><strong id="total-due-soon">Rp0</strong><small>Hari ini sampai 30 hari ke depan</small></article>
+          <article class="summary-card"><span>Invoice terbuka</span><strong id="open-count">0</strong><small>Dari <b id="invoice-count">0</b> invoice</small></article>
+        </section>
+
+        <section class="panel aging-panel" aria-labelledby="aging-heading">
+          <div class="panel-heading"><div><p class="eyebrow">ANALISIS UMUR PIUTANG</p><h2 id="aging-heading">Ringkasan aging</h2></div><span id="as-of"></span></div>
+          <div class="aging-grid" id="aging-summary"></div>
+        </section>
+
+        <section class="panel table-panel" id="receivables" aria-labelledby="table-heading">
+          <div class="table-heading">
+            <div><h2 id="table-heading">Daftar piutang</h2><p>Saldo per invoice setelah pembayaran diterima.</p></div>
+            <label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Cari invoice atau pelanggan" aria-label="Cari invoice atau pelanggan"></label>
+          </div>
+          <div class="filters" id="filters" aria-label="Filter kategori aging">
+            <button class="filter selected" data-filter="all" type="button">Semua</button>
+            <button class="filter" data-filter="Current" type="button">Belum jatuh tempo</button>
+            <button class="filter" data-filter="1-30" type="button">1–30 hari</button>
+            <button class="filter" data-filter="31-60" type="button">31–60 hari</button>
+            <button class="filter" data-filter="61-90" type="button">61–90 hari</button>
+            <button class="filter" data-filter="90+" type="button">Lebih dari 90 hari</button>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>INVOICE / PELANGGAN</th><th>TANGGAL</th><th>JATUH TEMPO</th><th>UMUR</th><th>SALDO PIUTANG</th><th>STATUS</th><th><span class="sr-only">Aksi</span></th></tr></thead>
+              <tbody id="invoice-rows"></tbody>
+            </table>
+          </div>
+          <div class="table-footer"><span id="result-count"></span><span>Nilai dalam Rupiah (IDR)</span></div>
+        </section>
+        <footer>FURNITURE RECEIVABLES <span>·</span> Demo edukasi — data tersimpan lokal di browser</footer>
+      </main>
+    </div>
+
+    <dialog class="dialog" id="customer-dialog">
+      <form id="customer-form">
+        <div class="dialog-heading"><div><p class="eyebrow">DATA PELANGGAN</p><h2>Tambah pelanggan</h2></div><button class="close" type="button" data-close aria-label="Tutup">×</button></div>
+        <label for="customer-name">Nama pelanggan</label><input id="customer-name" name="name" maxlength="120" required>
+        <label for="customer-company">Nama perusahaan <span>(opsional)</span></label><input id="customer-company" name="company_name" maxlength="120">
+        <label for="customer-email">Email <span>(opsional)</span></label><input id="customer-email" name="email" type="email" maxlength="254">
+        <label for="customer-phone">Telepon <span>(opsional)</span></label><input id="customer-phone" name="phone" maxlength="40">
+        <p class="form-error" id="customer-error" hidden></p>
+        <div class="dialog-actions"><button class="button button-light" type="button" data-close>Batal</button><button class="button button-primary" type="submit">Simpan pelanggan</button></div>
+      </form>
+    </dialog>
+
+    <dialog class="dialog invoice-dialog" id="invoice-dialog">
+      <form id="invoice-form">
+        <div class="dialog-heading"><div><p class="eyebrow">TAGIHAN BARU</p><h2>Buat invoice</h2></div><button class="close" type="button" data-close aria-label="Tutup">×</button></div>
+        <label for="invoice-number">Nomor invoice</label><input id="invoice-number" maxlength="60" placeholder="Contoh: INV-2026-001" required>
+        <label for="invoice-customer">Pelanggan</label><select id="invoice-customer" required></select>
+        <div class="date-grid"><div><label for="invoice-date">Tanggal invoice</label><input id="invoice-date" type="date" required></div><div><label for="due-date">Tanggal jatuh tempo</label><input id="due-date" type="date" required></div></div>
+        <div class="item-heading"><strong>Rincian furniture</strong><button id="add-item" class="button button-light" type="button">+ Tambah item</button></div>
+        <div class="items" id="items"></div>
+        <div class="total-line">Total invoice <strong id="invoice-total">Rp0</strong></div>
+        <p class="form-error" id="invoice-error" hidden></p>
+        <div class="dialog-actions"><button class="button button-light" type="button" data-close>Batal</button><button class="button button-primary" type="submit">Simpan invoice</button></div>
+      </form>
+    </dialog>
+
+    <dialog class="dialog" id="payment-dialog">
+      <form id="payment-form">
+        <div class="dialog-heading"><div><p class="eyebrow">PEMBAYARAN MASUK</p><h2>Catat pembayaran</h2></div><button class="close" type="button" data-close aria-label="Tutup">×</button></div>
+        <p class="payment-description" id="payment-description"></p>
+        <input id="payment-invoice-id" type="hidden">
+        <label for="payment-amount">Jumlah pembayaran (Rp)</label><input id="payment-amount" type="number" min="1" step="1" required>
+        <label for="payment-date">Tanggal pembayaran</label><input id="payment-date" type="date" required>
+        <label for="payment-method">Metode <span>(opsional)</span></label><select id="payment-method"><option value="">Pilih metode</option><option>Transfer bank</option><option>Tunai</option><option>Kartu</option><option>Lainnya</option></select>
+        <p class="form-error" id="payment-error" hidden></p>
+        <div class="dialog-actions"><button class="button button-light" type="button" data-close>Batal</button><button class="button button-primary" type="submit">Simpan pembayaran</button></div>
+      </form>
+    </dialog>
+    <script src="app.js"></script>
+  </body>
+</html>
